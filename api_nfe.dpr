@@ -7,10 +7,23 @@ program api_nfe;
 uses
   Horse,
   System.SysUtils,
-  Horse.Jhonson, // It's necessary to use the unit
-  System.JSON;
+  Horse.Jhonson,
+  System.JSON,
+  Provider.Connection in 'Providers\Provider.Connection.pas' {ProviderConnection: TDataModule};
+
+var
+  DBConnection : TProviderConnection;
+
+
+  function Init:boolean;
+  Begin
+    DBConnection := TProviderConnection.Create(nil);
+
+  End;
+
 
 begin
+  Init;
   // It's necessary to add the middleware in the Horse:
   THorse.Use(Jhonson());
 
