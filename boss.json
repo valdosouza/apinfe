@@ -1,0 +1,12 @@
+{
+	"name": "ApiNfe",
+	"description": "Api para emissão de NFe",
+	"version": "1.0.0",
+	"homepage": "www.setes.com.br",
+	"mainsrc": "./src",
+	"projects": [],
+	"dependencies": {
+		"github.com/hashload/horse": "^3.1.0",
+		"github.com/hashload/jhonson": "^1.1.5"
+	}
+}
