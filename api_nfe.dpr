@@ -8,14 +8,30 @@ uses
   Horse,
   System.SysUtils,
   Horse.Jhonson,
+  Horse.JWT,
   System.JSON,
   REST.Json,
   Provider.Connection in 'Providers\Provider.Connection.pas' {ProviderConnection: TDataModule},
-  ControllerUser,tblUser;
+  ControllerUser,
+  tblUser,
+  ArqIni,
+  System.IOUtils,
+  EndpointInvoicing in 'src\endpoint\EndpointInvoicing.pas';
 
 var
   DBConnection : TProviderConnection;
 
+  function getSecret:String;
+  var
+    LcEnv : String;
+  begin
+   LcEnv := Concat(TPath.GetDirectoryName(ParamStr(0)),
+                   TPath.DirectorySeparatorChar,
+                   'Config',
+                   TPath.DirectorySeparatorChar,
+                   '.env');
+    Result := TArqIni.LeIni(LcEnv,'DEF','SECRET');
+  end;
 
   function Init:boolean;
   Begin
@@ -26,33 +42,12 @@ var
 
 begin
   Init;
-  // It's necessary to add the middleware in the Horse:
+
+  THorse.Use(HorseJWT(getSecret));
+
   THorse.Use(Jhonson());
 
-  // You can specify the charset when adding middleware to the Horse:
-  // THorse.Use(Jhonson('UTF-8'));
+  TEndpointInvoicing.Registrar;
 
-
-  THorse.Post('/invoicing',
-    procedure(Req: THorseRequest; Res: THorseResponse; Next: TProc)
-    var
-      LBody: TJSONObject;
-      LcUser : TControllerUser;
-    begin
-      // Req.Body gives access to the content of the request in string format.
-      // Using jhonson middleware, we can get the content of the request in JSON format.
-      try
-        //LBody := Req.Body;
-        writeln( Req.Body );
-        LcUser := TControllerUser.create(nil);
-        LcUser.HasInstitution.Registro.Estabelecimento := 1;
-        LcUser.Registro.Codigo := 1;
-        LcUser.getbyKey;
-      finally
-        Res.Send( TJson.ObjectToJsonString(LcUser.Registro));
-        LcUser.disposeOf;
-      end;
-    end);
-
-    THorse.Listen(9000);
+  THorse.Listen(9000);
 end.

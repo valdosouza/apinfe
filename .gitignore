@@ -72,5 +72,6 @@ modules/
 Win32/
 # Arquivos de configurações 
 bin/Config/db.ini
-bin/Config/drive.ini
+bin/Config/driver.ini
+bin/Config/.env
 bin/api_nfe.exe
