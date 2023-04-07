@@ -71,6 +71,6 @@ modules/
 # Arquivos de compilação
 Win32/
 # Arquivos de configurações 
-bin\Config\db.ini
-bin\Config\driver.ini
-bin\api_nfe.exe
+bin/Config/db.ini
+bin/Config/driver.ini
+bin/api_nfe.exe
