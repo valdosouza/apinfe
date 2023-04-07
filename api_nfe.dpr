@@ -9,7 +9,9 @@ uses
   System.SysUtils,
   Horse.Jhonson,
   System.JSON,
-  Provider.Connection in 'Providers\Provider.Connection.pas' {ProviderConnection: TDataModule};
+  REST.Json,
+  Provider.Connection in 'Providers\Provider.Connection.pas' {ProviderConnection: TDataModule},
+  ControllerUser,tblUser;
 
 var
   DBConnection : TProviderConnection;
@@ -30,20 +32,26 @@ begin
   // You can specify the charset when adding middleware to the Horse:
   // THorse.Use(Jhonson('UTF-8'));
 
-  THorse.Post('/ping',
+  THorse.Post('/invoicing',
     procedure(Req: THorseRequest; Res: THorseResponse; Next: TProc)
     var
       LBody: TJSONObject;
+      LcUser : TControllerUser;
     begin
       // Req.Body gives access to the content of the request in string format.
       // Using jhonson middleware, we can get the content of the request in JSON format.
-
-      LBody := Req.Body<TJSONObject>;
-      Res.Send<TJSONObject>(LBody);
+      try
+        //LBody := Req.Body;
+        writeln( Req.Body );
+        LcUser := TControllerUser.create(nil);
+        LcUser.HasInstitution.Registro.Estabelecimento := 1;
+        LcUser.Registro.Codigo := 1;
+        LcUser.getbyKey;
+      finally
+        Res.Send( TJson.ObjectToJsonString(LcUser.Registro));
+        LcUser.disposeOf;
+      end;
     end);
-
-  //THorse.Listen(9000);
-
 
     THorse.Listen(9000);
 end.

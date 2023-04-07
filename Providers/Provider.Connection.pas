@@ -33,6 +33,7 @@ var
   LcConfigDB, LcConfigDriver,LcVendedorLib, LcS : String;
   LcQry: TFDQuery;
 begin
+
  LcVendedorLib := Concat(TPath.GetDirectoryName(ParamStr(0)),
                       TPath.DirectorySeparatorChar,
                       'Config',
