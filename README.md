@@ -1,4 +1,4 @@
-# apinfe / Delphi / Horse
+# apinfe / Delphi / Boss / Horse
 Api para emissao de Nota e Autorização de NFe
 
 Por um aplicativo mobile que faz pedidos on-line poderemos efetuar as seguintes operações
