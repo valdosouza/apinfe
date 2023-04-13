@@ -75,7 +75,7 @@
         <DCC_UsePackage>RESTComponents;emsclientfiredac;DataSnapFireDAC;FireDACIBDriver;emsclient;FireDACCommon;RESTBackendComponents;soapserver;CloudService;FireDACCommonDriver;inet;FireDAC;FireDACSqliteDriver;soaprtl;soapmidas;$(DCC_UsePackage)</DCC_UsePackage>
         <DCC_Namespace>System;Xml;Data;Datasnap;Web;Soap;$(DCC_Namespace)</DCC_Namespace>
         <SanitizedProjectName>api_nfe</SanitizedProjectName>
-        <DCC_UnitSearchPath>src\controller;src\model;function;orm;modules\.dcp;modules\.dcu;modules;modules\delphi-jose-jwt\Source\Common;modules\delphi-jose-jwt\Source\JOSE;modules\hashlib4pascal\HashLib\src\Base;modules\hashlib4pascal\HashLib\src\Checksum;modules\hashlib4pascal\HashLib\src\Crypto\Blake2BParams;modules\hashlib4pascal\HashLib\src\Crypto\Blake2SParams;modules\hashlib4pascal\HashLib\src\Crypto;modules\hashlib4pascal\HashLib\src\Hash128;modules\hashlib4pascal\HashLib\src\Hash32;modules\hashlib4pascal\HashLib\src\Hash64;modules\hashlib4pascal\HashLib\src\Include;modules\hashlib4pascal\HashLib\src\Interfaces;modules\hashlib4pascal\HashLib\src\Interfaces\IBlake2BParams;modules\hashlib4pascal\HashLib\src\Interfaces\IBlake2SParams;modules\hashlib4pascal\HashLib\src\KDF;modules\hashlib4pascal\HashLib\src\NullDigest;modules\hashlib4pascal\HashLib\src\Nullable;modules\hashlib4pascal\HashLib\src\Packages\FPC;modules\hashlib4pascal\HashLib\src\Utils;modules\hashlib4pascal\HashLib.Benchmark\src\Core;modules\hashlib4pascal\HashLib.Benchmark\src\Forms\FMX;modules\hashlib4pascal\HashLib.Tests\src;modules\horse\src;modules\horse-jwt\src;modules\jhonson\src;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
+        <DCC_UnitSearchPath>src\controller;src\model;function;orm;modules\.dcp;modules\.dcu;modules;modules\delphi-jose-jwt\Source\Common;modules\delphi-jose-jwt\Source\JOSE;modules\hashlib4pascal\HashLib\src\Base;modules\hashlib4pascal\HashLib\src\Checksum;modules\hashlib4pascal\HashLib\src\Crypto\Blake2BParams;modules\hashlib4pascal\HashLib\src\Crypto\Blake2SParams;modules\hashlib4pascal\HashLib\src\Crypto;modules\hashlib4pascal\HashLib\src\Hash128;modules\hashlib4pascal\HashLib\src\Hash32;modules\hashlib4pascal\HashLib\src\Hash64;modules\hashlib4pascal\HashLib\src\Include;modules\hashlib4pascal\HashLib\src\Interfaces;modules\hashlib4pascal\HashLib\src\Interfaces\IBlake2BParams;modules\hashlib4pascal\HashLib\src\Interfaces\IBlake2SParams;modules\hashlib4pascal\HashLib\src\KDF;modules\hashlib4pascal\HashLib\src\NullDigest;modules\hashlib4pascal\HashLib\src\Nullable;modules\hashlib4pascal\HashLib\src\Packages\FPC;modules\hashlib4pascal\HashLib\src\Utils;modules\hashlib4pascal\HashLib.Benchmark\src\Core;modules\hashlib4pascal\HashLib.Benchmark\src\Forms\FMX;modules\hashlib4pascal\HashLib.Tests\src;modules\horse\src;modules\horse-jwt\src;modules\jhonson\src;src\parameter;src\data_objetcs;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Base_Android)'!=''">
         <DCC_UsePackage>DBXSqliteDriver;DBXInterBaseDriver;tethering;bindcompfmx;FmxTeeUI;fmx;FireDACDBXDriver;dbexpress;IndyCore;dsnap;DataSnapCommon;bindengine;DataSnapClient;bindcompdbx;IndyIPCommon;IndyIPServer;IndySystem;ACBr_Integrador;fmxFireDAC;ACBr_Comum;ibmonitor;FMXTee;DbxCommonDriver;ibxpress;xmlrtl;DataSnapNativeClient;ibxbindings;FireDACDSDriver;rtl;DbxClientDriver;CustomIPTransport;ACBr_PIXCD;bindcomp;IndyIPClient;dbxcds;dsnapxml;DataSnapProviderClient;dbrtl;IndyProtocols;$(DCC_UsePackage)</DCC_UsePackage>
@@ -145,7 +145,21 @@
             <Form>ProviderConnection</Form>
             <DesignClass>TDataModule</DesignClass>
         </DCCReference>
-        <DCCReference Include="src\endpoint\EndpointInvoicing.pas"/>
+        <DCCReference Include="src\endpoint\EndpointInvoicingSale.pas"/>
+        <DCCReference Include="src\parameter\prm_to_invoice.pas"/>
+        <DCCReference Include="src\parameter\prm_to_invoice_sale.pas"/>
+        <DCCReference Include="src\controller\ControllerInvoiceSale.pas"/>
+        <DCCReference Include="src\controller\Controllerinvoicemerchandise.pas"/>
+        <DCCReference Include="src\controller\ControllerOrderSale.pas"/>
+        <DCCReference Include="src\controller\ControllerOrder.pas"/>
+        <DCCReference Include="src\controller\Controllerinvoice.pas"/>
+        <DCCReference Include="src\controller\ControllerOrderItem.pas"/>
+        <DCCReference Include="src\controller\ControllerOrderShipping.pas"/>
+        <DCCReference Include="src\controller\ControllerOrderTotalizer.pas"/>
+        <DCCReference Include="src\controller\ControllerTaxRuler.pas"/>
+        <DCCReference Include="src\controller\ControllerMerchandise.pas"/>
+        <DCCReference Include="src\controller\ControllerInvoiceShipping.pas"/>
+        <DCCReference Include="src\controller\ControllerInvoiceReturn55.pas"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>

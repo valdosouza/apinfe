@@ -3,7 +3,7 @@ unit ArqIni;
 interface
 
 uses
-  IniFiles, SysUtils, DateUtils, System.Types, System.StrUtils;
+  IniFiles, SysUtils, DateUtils, System.Types, System.StrUtils, System.IOUtils;
 
 
 
@@ -18,6 +18,11 @@ type
     Class function  LeIniBoolean(sArqIni, sSecao: string; sVariavel: String): boolean;
     class Function  LeIniDate(sArqIni: string; sSecao: string; sVariavel: string): TDateTime;
 
+    class function getSecret:String;
+    class function getPathPublico:String;
+    class function getPathPrivado:String;
+    class function getPathURL:String;
+    class function getPathIMAGE:String;
 
   end;
 
@@ -100,6 +105,69 @@ begin
   end;
 end;
 
+class function TArqIni.getSecret:String;
+var
+  LcEnv : String;
+begin
+ LcEnv := Concat(TPath.GetDirectoryName(ParamStr(0)),
+                 TPath.DirectorySeparatorChar,
+                 'Config',
+                 TPath.DirectorySeparatorChar,
+                 '.env');
+  Result := TArqIni.LeIni(LcEnv,'DEF','SECRET');
+end;
 
+class function TArqIni.getPathPublico:String;
+var
+  LcEnv : String;
+begin
+ LcEnv := Concat(TPath.GetDirectoryName(ParamStr(0)),
+                 TPath.DirectorySeparatorChar,
+                 'Config',
+                 TPath.DirectorySeparatorChar,
+                 '.env');
+  Result := TArqIni.LeIni(LcEnv,'DEF','PATHPUBLICO');
+end;
+
+class function TArqIni.getPathPrivado:String;
+var
+  LcEnv : String;
+begin
+ LcEnv := Concat(TPath.GetDirectoryName(ParamStr(0)),
+                 TPath.DirectorySeparatorChar,
+                 'Config',
+                 TPath.DirectorySeparatorChar,
+                 '.env');
+  Result := TArqIni.LeIni(LcEnv,'DEF','PATHPRIVADO');
+end;
+
+class function TArqIni.getPathURL:String;
+var
+  LcEnv : String;
+begin
+ LcEnv := Concat(TPath.GetDirectoryName(ParamStr(0)),
+                 TPath.DirectorySeparatorChar,
+                 'Config',
+                 TPath.DirectorySeparatorChar,
+                 '.env');
+  Result := TArqIni.LeIni(LcEnv,'DEF','PATHURL');
+end;
+
+class function TArqIni.getPathIMAGE:String;
+var
+  LcEnv : String;
+begin
+ LcEnv := Concat(TPath.GetDirectoryName(ParamStr(0)),
+                 TPath.DirectorySeparatorChar,
+                 'Config',
+                 TPath.DirectorySeparatorChar,
+                 '.env');
+  Result := TArqIni.LeIni(LcEnv,'DEF','PATHIMAGE');
+end;
 
 end.
+
+
+
+
+

@@ -20,7 +20,7 @@ type
   Function MaskCep(comp : String):String;
   function StrZero(Num : Real ; Zeros,Deci: integer): string;
   function StrTran(Entra: string ; Search: string ; Replace : string): string;
-  function ArredondarParaBaixo(Fc_Valor:Real;Fc_Casas:Integer;Fc_Forcar:Boolean):Real;
+  function RoundToDow(Fc_Valor:Real;Fc_Casas:Integer;Fc_Forcar:Boolean):Real;
   function  ValidDocFiscal(doc:String):String;
   function  ValidInscEstadual(Numero,Estado:String): String;
   Function ValidCep(cep:String):String;
@@ -382,7 +382,7 @@ begin
   Result := Sai;
 end;
 
-function ArredondarParaBaixo(Fc_Valor:Real;Fc_Casas:Integer;Fc_Forcar:Boolean):Real;
+function RoundToDow(Fc_Valor:Real;Fc_Casas:Integer;Fc_Forcar:Boolean):Real;
 Var
   Lc_strAux : String;
 Begin

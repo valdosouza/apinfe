@@ -4,18 +4,27 @@ interface
 
 uses System.Classes,System.SysUtils, FireDAC.Comp.Client, FireDAC.Stan.Param,
     System.Generics.Collections,GenericDao, FireDAC.DApt , //uAuthCM,
-    FireDAC.UI.Intf,  FireDAC.Comp.UI;
+    FireDAC.UI.Intf,  FireDAC.Comp.UI, JOSE.Types.JSON;
 
 Type
 
   TBaseController = Class(TComponent)
   private
+    FVendedor: Integer;
+
+
+    procedure setFVendedor(const Value: Integer);
+    procedure setFMensagemRetorno(const Value: TJSOnObject);
+
 
   protected
-//    FDataCM: TDataCM;
-//    FAuthCM: TAuthCM;
-//    procedure setFAuthCM(const Value: TAuthCM);
-//    procedure setFDataCM(const Value: TDataCM);
+    FEstabelecimento: Integer;
+    FTerminal: Integer;
+    FOrdem: Integer;
+    procedure setFEstabelecimento(const Value: Integer);
+    procedure setFOrdem(const Value: Integer);
+    procedure setFTerminal(const Value: Integer);
+
 
     function clearObj<T: class>(Obj: T):Boolean;
     function insertObj<T: class>(Obj: T):Boolean;
@@ -37,6 +46,7 @@ Type
     function execcmd(sql:STring):Boolean;
     Procedure geralog(origem,msg : string);Virtual;
   public
+    FMensagemRetorno: TJSOnObject;
     exist : Boolean;
     orderby : String;
     constructor Create(AOwner: TComponent); override;
@@ -46,9 +56,11 @@ Type
     function setOrderBy:String;
     Function ConverteDataMysql(Data:TDateTime) : String;
     procedure ClonarObj<T: class>(ObjOri: T;ObjClone: T);
-//    property DataCM : TDataCM read FDataCM write setFDataCM;
-//    property AuthCM : TAuthCM read FAuthCM write setFAuthCM;
 
+    property Estabelecimento : Integer read FEstabelecimento write setFEstabelecimento;
+    property Ordem : Integer read FOrdem write setFOrdem;
+    property Terminal : Integer read FTerminal write setFTerminal;
+    property MensagemRetorno : TJSOnObject read FMensagemRetorno write setFMensagemRetorno;
   End;
 
 implementation
@@ -106,10 +118,12 @@ constructor TBaseController.Create(AOwner: TComponent);
 begin
   inherited;
   orderby := '';
+  FMensagemRetorno := TJSOnObject.Create;
 end;
 
 destructor TBaseController.Destroy;
 begin
+  FMensagemRetorno.DisposeOf;
   inherited; //- quando ativa aparece invalida operator
 end;
 
@@ -233,6 +247,32 @@ begin
   FDataCM := Value;
 end;
 }
+procedure TBaseController.setFEstabelecimento(const Value: Integer);
+begin
+  FEstabelecimento := Value;
+end;
+
+procedure TBaseController.setFMensagemRetorno(const Value: TJSOnObject);
+begin
+  FMensagemRetorno := Value;
+end;
+
+procedure TBaseController.setFOrdem(const Value: Integer);
+begin
+  FOrdem := Value;
+end;
+
+procedure TBaseController.setFTerminal(const Value: Integer);
+begin
+  FTerminal := Value;
+end;
+
+procedure TBaseController.setFVendedor(const Value: Integer);
+begin
+  FVendedor := Value;
+end;
+
+
 function TBaseController.setOrderBy: String;
 begin
   if Trim(orderby)<>'' then

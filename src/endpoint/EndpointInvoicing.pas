@@ -9,13 +9,18 @@ uses
   Horse.JWT,
   System.JSON,
   REST.Json,
-  System.IOUtils;
+  System.IOUtils,
+  ACBrNFe,
+  ControllerInvoiceMerchandise, System.Classes;
 
 type
   TEndpointInvoicing = class
-    class procedure Registrar;
-    class procedure Get(Req: THorseRequest; Res : THorseResponse; Next: TProc);
-    class procedure Invoicing(Req: THorseRequest; Res: THorseResponse; Next: TProc);
+    private
+
+    public
+      class procedure Registrar;
+      class procedure Get(Req: THorseRequest; Res : THorseResponse; Next: TProc);
+      class procedure Invoicing(Req: THorseRequest; Res: THorseResponse; Next: TProc);
   end;
 implementation
 
@@ -30,12 +35,23 @@ end;
 class procedure TEndpointInvoicing.Invoicing(Req: THorseRequest; Res: THorseResponse;
   Next: TProc);
 var
-  LBody: TJSONObject;
+  Lc_nf : TControllerInvoiceMerchandise;
 begin
   try
-    //do something
+    Lc_nf := TControllerInvoiceMerchandise.Create(nil);
+    Lc_nf.Estabelecimento := 0;
+    Lc_nf.Terminal := 0;
+    Lc_nf.Ordem := 0;
+    if Lc_nf.ValidateInvoicing then
+    Begin
+      Lc_nf.invoicing;
+    End
+    else
+    Begin
+
+    End;
   finally
-    Res.Send( 'Order Faturado com sucesso');
+    Lc_nf.disposeOf;
   end;
 end;
 

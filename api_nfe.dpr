@@ -16,22 +16,26 @@ uses
   tblUser,
   ArqIni,
   System.IOUtils,
-  EndpointInvoicing in 'src\endpoint\EndpointInvoicing.pas';
+  EndpointInvoicingSale in 'src\endpoint\EndpointInvoicingSale.pas',
+  prm_to_invoice in 'src\parameter\prm_to_invoice.pas',
+  prm_to_invoice_sale in 'src\parameter\prm_to_invoice_sale.pas',
+  ControllerInvoiceSale in 'src\controller\ControllerInvoiceSale.pas',
+  Controllerinvoicemerchandise in 'src\controller\Controllerinvoicemerchandise.pas',
+  ControllerOrderSale in 'src\controller\ControllerOrderSale.pas',
+  ControllerOrder in 'src\controller\ControllerOrder.pas',
+  Controllerinvoice in 'src\controller\Controllerinvoice.pas',
+  ControllerOrderItem in 'src\controller\ControllerOrderItem.pas',
+  ControllerOrderShipping in 'src\controller\ControllerOrderShipping.pas',
+  ControllerOrderTotalizer in 'src\controller\ControllerOrderTotalizer.pas',
+  ControllerTaxRuler in 'src\controller\ControllerTaxRuler.pas',
+  ControllerMerchandise in 'src\controller\ControllerMerchandise.pas',
+  ControllerInvoiceShipping in 'src\controller\ControllerInvoiceShipping.pas',
+  ControllerInvoiceReturn55 in 'src\controller\ControllerInvoiceReturn55.pas';
 
 var
   DBConnection : TProviderConnection;
 
-  function getSecret:String;
-  var
-    LcEnv : String;
-  begin
-   LcEnv := Concat(TPath.GetDirectoryName(ParamStr(0)),
-                   TPath.DirectorySeparatorChar,
-                   'Config',
-                   TPath.DirectorySeparatorChar,
-                   '.env');
-    Result := TArqIni.LeIni(LcEnv,'DEF','SECRET');
-  end;
+
 
   function Init:boolean;
   Begin
@@ -43,11 +47,11 @@ var
 begin
   Init;
 
-  THorse.Use(HorseJWT(getSecret));
+  THorse.Use(HorseJWT(TArqIni.getSecret));
 
   THorse.Use(Jhonson());
 
-  TEndpointInvoicing.Registrar;
+  TEndpointInvoicingSale.Registrar;
 
   THorse.Listen(9000);
 end.
