@@ -30,7 +30,12 @@ uses
   ControllerTaxRuler in 'src\controller\ControllerTaxRuler.pas',
   ControllerMerchandise in 'src\controller\ControllerMerchandise.pas',
   ControllerInvoiceShipping in 'src\controller\ControllerInvoiceShipping.pas',
-  ControllerInvoiceReturn55 in 'src\controller\ControllerInvoiceReturn55.pas';
+  ControllerInvoiceReturn55 in 'src\controller\ControllerInvoiceReturn55.pas',
+  EndpointAuthorizationSale in 'src\endpoint\EndpointAuthorizationSale.pas',
+  ControllerNfe in 'src\controller\ControllerNfe.pas',
+  ControllerNfeConfig in 'src\controller\ControllerNfeConfig.pas',
+  ControllerNfe55 in 'src\controller\ControllerNfe55.pas',
+  ControllerNfe55Sale in 'src\controller\ControllerNfe55Sale.pas';
 
 var
   DBConnection : TProviderConnection;
@@ -52,6 +57,7 @@ begin
   THorse.Use(Jhonson());
 
   TEndpointInvoicingSale.Registrar;
+  TEndpointAuthorizationSale.Registrar;
 
   THorse.Listen(9000);
 end.

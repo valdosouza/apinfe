@@ -24,6 +24,7 @@ Type
     function existNumber:Boolean;
     function save:boolean;
     function update:boolean;
+    function updateDataHora:boolean;
     function delete:boolean;
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
@@ -211,6 +212,33 @@ begin
 end;
 
 
+
+function TControllerinvoice.updateDataHora: boolean;
+Var
+  Lc_Qry : TFDQuery;
+begin
+  Try
+    Lc_Qry := createQuery;
+    with Lc_Qry do
+    Begin
+      Active := False;
+      sql.Clear;
+      sql.Add(concat(
+              'update tb_invoice inv set ',
+              'inv.dt_emission =:dt_emission ',
+              'where inv.tb_institution_id =:institution_id ',
+              ' and (inv.id =:id) '
+      ));
+      ParamByName('institution_id').AsInteger := Registro.Estabelecimento;
+      ParamByName('id').AsInteger := Registro.Codigo;
+      ParamByName('dt_emission').AsDateTime := Registro.Data_emissao;
+      ExecSQL;
+    End;
+  Finally
+    Lc_Qry.Close;
+    FreeAndNil(Lc_Qry);
+  End;
+end;
 
 function TControllerinvoice.getByKey: boolean;
 begin

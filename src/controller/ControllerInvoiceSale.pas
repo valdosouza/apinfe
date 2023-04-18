@@ -11,12 +11,10 @@ Type
   private
     FModeloNota: String;
     FObservacao: String;
-    FMensagemRetorno: String;
     FVendedor: Integer;
     procedure setVariable;
     procedure setFModeloNota(const Value: String);
     procedure setFObservacao(const Value: String);
-    procedure setMensagemRetorno(const Value: String);
     procedure setFVendedor(const Value: Integer);
 
   protected
@@ -123,10 +121,6 @@ begin
   FVendedor := Value;
 end;
 
-procedure TControllerInvoiceSale.setMensagemRetorno(const Value: String);
-begin
-  FMensagemRetorno := Value;
-end;
 
 procedure TControllerInvoiceSale.setVariable;
 begin
@@ -143,7 +137,7 @@ begin
   OrderSale.getByKey;
   if not OrderSale.exist then
   Begin
-    FMensagemRetorno := 'Ordem não encontrada';
+    FMensagemRetorno.AddPair('Mensagem','Ordem não encontrada');
     Result := False;
   End;
   //Emitente
