@@ -31,6 +31,7 @@ Type
     function saveByDescription:boolean;
     procedure getbyKey;
     function getByDescripton:Boolean;
+    function getCodigoNFce:String;
     function insert:boolean;
     Function delete:boolean;
     Function activeRegiter:Boolean;
@@ -196,6 +197,26 @@ begin
   _getByKey(Registro);
 end;
 
+
+function TControllerPaymentTypes.getCodigoNFce: String;
+Var
+  Lc_Qry : TFDQuery;
+begin
+  Try
+    Lc_Qry := createQuery;
+    with Lc_Qry do
+    Begin
+      sql.Clear;
+      sql.Add('SELECT code_nfce from tb_payment_types where id =:id');
+      ParamByName('id').AsInteger := Registro.Codigo;
+      Active := True;
+      FetchAll;
+      Result := FieldByName('id_nfce').AsString;
+    End;
+  Finally
+    FinalizaQuery(Lc_Qry);
+  End;
+end;
 
 procedure TControllerPaymentTypes.getHas;
 Var

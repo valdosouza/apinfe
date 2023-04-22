@@ -6,12 +6,14 @@ uses
   System.SysUtils, System.Classes, FireDAC.Stan.Intf, FireDAC.Stan.Option,
   FireDAC.Stan.Error, FireDAC.UI.Intf, FireDAC.Phys.Intf, FireDAC.Stan.Def,
   FireDAC.Phys, FireDAC.Comp.Client, System.IOUtils,FireDAC.DApt,
-  FireDAC.Phys.MySQLDef, FireDAC.Phys.MySQL, FireDAC.Stan.Pool,FireDAC.Stan.Async;
+  FireDAC.Phys.MySQLDef, FireDAC.Phys.MySQL, FireDAC.Stan.Pool,FireDAC.Stan.Async,
+  FireDAC.Comp.ScriptCommands, FireDAC.Stan.Util, FireDAC.Comp.Script;
 
 type
   TProviderConnection = class(TDataModule)
     FDManager: TFDManager;
     FDPhysMySQL: TFDPhysMySQLDriverLink;
+    FDScript1: TFDScript;
     procedure DataModuleCreate(Sender: TObject);
   private
     { Private declarations }

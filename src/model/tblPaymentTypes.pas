@@ -12,10 +12,12 @@ Type
     FId: Integer;
     Fupdated_at: TDAteTime;
     Fcreated_at: TDAteTime;
+    Fid_nfce: String;
     procedure setFcreated_at(const Value: TDAteTime);
     procedure setFdescription(const Value: String);
     procedure setFId(const Value: Integer);
     procedure setFupdated_at(const Value: TDAteTime);
+    procedure setFid_nfce(const Value: String);
 
   public
     [FieldName('id')]
@@ -24,6 +26,9 @@ Type
 
     [FieldName('description')]
     property Descricao: String read Fdescription write setFdescription;
+
+    [FieldName('id_nfce')]
+    property CodigoNFCE: String read Fid_nfce write setFid_nfce;
 
     [FieldName('created_at')]
     property RegistroCriado: TDAteTime read Fcreated_at write setFcreated_at;
@@ -34,6 +39,11 @@ Type
   End;
 implementation
 { TPaymentTypes }
+
+procedure TPaymentTypes.setFid_nfce(const Value: String);
+begin
+  Fid_nfce := Value;
+end;
 
 procedure TPaymentTypes.setFcreated_at(const Value: TDAteTime);
 begin

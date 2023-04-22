@@ -3,7 +3,8 @@ unit ControllerState;
 interface
 uses System.Classes, System.SysUtils,BaseController,
       tblState,FireDAC.Comp.Client,Md5, FireDAC.Stan.Param,
-      ControllerCountry,rest.json, System.Generics.Collections;
+      ControllerCountry,rest.json, System.Generics.Collections,
+      ControllerStateMvaNCM,ControllerStateFcpNCM;
 
 Type
   TListState =  TObjectList<TState>;
@@ -15,6 +16,8 @@ Type
     Registro : TState;
     Country : TControllerCountry;
     Lista: TListState;
+    MVA : TControllerStateMvaNCM;
+    FCP : TControllerStateFcpNCM;
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
     procedure setParametro(par:String);
@@ -48,6 +51,8 @@ begin
   Registro := TState.Create;
   Country := TControllerCountry.Create(Self);
   Lista := TListState.Create;
+  MVA := TControllerStateMvaNCM.Create(self);
+  FCP := TControllerStateFcpNCM.Create(self);
 end;
 
 function TControllerState.delete: boolean;
@@ -62,6 +67,8 @@ end;
 
 destructor TControllerState.Destroy;
 begin
+  MVA.DisposeOf;
+  FCP.DisposeOf;
   Country.DisposeOf ;
   Registro.DisposeOf ;
   Lista.DisposeOf ;

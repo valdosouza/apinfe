@@ -1,7 +1,7 @@
 object ProviderConnection: TProviderConnection
   OldCreateOrder = False
   OnCreate = DataModuleCreate
-  Height = 88
+  Height = 178
   Width = 192
   object FDManager: TFDManager
     FormatOptions.AssignedValues = [fvMapRules]
@@ -14,5 +14,12 @@ object ProviderConnection: TProviderConnection
   object FDPhysMySQL: TFDPhysMySQLDriverLink
     Left = 88
     Top = 24
+  end
+  object FDScript1: TFDScript
+    SQLScripts = <>
+    Params = <>
+    Macros = <>
+    Left = 96
+    Top = 128
   end
 end

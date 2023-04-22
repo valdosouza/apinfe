@@ -16,7 +16,6 @@ Type
     Registro        : Tinvoice;
     Pedido          : TControllerOrder;
     Observacao      : TControllerInvoiceObs;
-    Financeiro      : TControllerFinancialBills;
     Estabelecimento : TControllerInstitution;
     Emitente        : TControllerEntityFiscal;
     Destinatario    : TControllerEntityFiscal;
@@ -51,7 +50,6 @@ begin
   Registro        := Tinvoice.Create;
   Pedido          := TControllerOrder.Create(Self);
   Observacao      := TControllerInvoiceObs.Create(Self);
-  Financeiro      := TControllerFinancialBills.Create(Self);
   Emitente        := TControllerEntityFiscal.Create(Self);
   Destinatario    := TControllerEntityFiscal.Create(Self);
   Estabelecimento := TControllerInstitution.Create(Self);
@@ -68,7 +66,6 @@ begin
   Registro.DisposeOf;
   Pedido.DisposeOf;
   Observacao.DisposeOf;
-  Financeiro.DisposeOf;
   Emitente.DisposeOf;
   Destinatario.DisposeOf;
   Estabelecimento.DisposeOf;

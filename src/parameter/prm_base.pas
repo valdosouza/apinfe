@@ -32,7 +32,6 @@ Type
 
     property Estabelecimento : Integer read FEstabelecimento write setFEstabelecimento;
     property Terminal: Integer read FTerminal write setFTerminal;
-
     property Usuario: Integer read FUsuario write setFUsuario;
     property Pagina : Integer read FPagina write setFPagina;
     property DataInicial : String read FDataInicial write setFDataInicial;

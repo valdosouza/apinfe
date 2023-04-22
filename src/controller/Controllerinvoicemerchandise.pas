@@ -33,6 +33,7 @@ Type
     procedure DistributeIPI;
 
     function calculateICMS:boolean;
+    function calculateIImpostoAproximado:boolean;
     function calculateIPI:boolean;
     function calculatePIS:Boolean;
     function calculateCofins:Boolean;
@@ -134,6 +135,8 @@ begin
   DistributeInsuranceItem;
   DistributeExpensesItem;
 
+  calculateIImpostoAproximado;
+
   if FDistribuirITemsIcms or FDistribuirITemsIcmsST then
   Begin
     DistributeICMSItem;
@@ -162,6 +165,33 @@ end;
 function TControllerInvoiceMerchandise.calculateII: Boolean;
 begin
   REsult := True;
+end;
+
+function TControllerInvoiceMerchandise.calculateIImpostoAproximado: boolean;
+Var
+  Lc_Qry:TFDQuery;
+  Lc_Campo : String;
+
+begin
+  Try
+    Lc_Qry := createQuery;
+    with Lc_Qry do
+    Begin
+      if (Itens.Icms.Registro.Origem = '0') then
+        Lc_Campo := 'NCM_AQ_NAC'
+      else
+        Lc_Campo := 'NCM_AQ_IMP';
+
+      SQL.Add('select ' + Lc_Campo + ' , NCM_AQ_ESTADUAL, NCM_AQ_MUNICIPAL FROM tb_ncm WHERE tb_ncm.ncm_n_ncm =:NCM_N_NCM');
+      ParamByName('NCM_N_NCM').AsString := Itens.Mercadoria.Registro.NCM;
+      Active := True;
+      Itens.Icms.Lista[FItemIndex].ImpostoAproximado := FieldByName(Lc_Campo).AsFloat +
+                                                        FieldByName('NCM_AQ_ESTADUAL').AsFloat +
+                                                        FieldByName('NCM_AQ_MUNICIPAL').AsFloat;
+    end;
+  Finally
+    FinalizaQuery(Lc_Qry);
+  End;
 end;
 
 function TControllerInvoiceMerchandise.calculateIPI: boolean;
@@ -489,15 +519,18 @@ begin
   _getByKey(Registro);
 
   //Nota Principal
-  invoice.Registro.Estabelecimento := Self.Registro.Estabelecimento;
-  invoice.Registro.Codigo := Self.Registro.Codigo;
+  invoice.Registro.Estabelecimento  := Self.Registro.Estabelecimento;
+  invoice.Registro.Codigo           := Self.Registro.Codigo;
+  invoice.Registro.Terminal         := Self.Registro.Terminal;
   invoice.getByKey;
   //Cfop
   invoice.Cfop.Registro.Codigo := invoice.Registro.Cfop;
   invoice.Cfop.getByKey;
   //Retorno nota
-  invoice.Registro.Estabelecimento := Self.Registro.Estabelecimento;
-  invoice.Registro.Codigo := Self.Registro.Codigo;
+
+  Return55.Registro.Estabelecimento := Self.Registro.Estabelecimento;
+  Return55.Registro.Codigo          := Self.Registro.Codigo;
+  Return55.Registro.Terminal        := Self.Registro.Terminal;
   invoice.getByKey;
 end;
 

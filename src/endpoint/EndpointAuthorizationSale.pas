@@ -37,11 +37,10 @@ class procedure TEndpointAuthorizationSale.Authorization(Req: THorseRequest; Res
   Next: TProc);
 var
   Lc_Ctrl : TControllerNfe55Sale;
-  LcParams : TPrmToInvoiceSale;
 begin
   try
-    LcParams := TJson.JsonToObject<TPrmToInvoiceSale>(Req.Body);
     Lc_Ctrl := TControllerNfe55Sale.Create(nil);
+    Lc_Ctrl.Parametros := TJson.JsonToObject<TPrmToInvoiceSale>(Req.Body);
     Lc_Ctrl.inicializa;
     if Lc_Ctrl.ValidateAuthorization then
     Begin

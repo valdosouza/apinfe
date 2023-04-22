@@ -405,9 +405,11 @@ end;
 function TControllerMerchandise.getByKey: Boolean;
 begin
   _getByKey(Registro);
-  Produto.Registro.codigo := Registro.Codigo;
-  Produto.Registro.Estabelecimento := Registro.Estabelecimento;
-  Produto.getByKey;
+
+//  obedecer a definfição de pegar somente o registro da tabela caso contrario utilizar o getallbykey
+//  Produto.Registro.codigo := Registro.Codigo;
+//  Produto.Registro.Estabelecimento := Registro.Estabelecimento;
+//  Produto.getByKey;
 end;
 
 function TControllerMerchandise.getIdByProvider(docFiscal,product: String): Integer;

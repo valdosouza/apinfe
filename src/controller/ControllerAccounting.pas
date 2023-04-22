@@ -19,6 +19,8 @@ Type
     Function delete:boolean;
     function getByKey:Boolean;
     function getAllByKey:boolean;
+    function getCNPJ: String;
+
   End;
 
 implementation
@@ -86,6 +88,46 @@ end;
 function TControllerAccounting.getByKey: Boolean;
 begin
   _getByKey(Registro);
+end;
+
+function TControllerAccounting.getCNPJ: String;
+Var
+  Lc_Qry : TFDQuery;
+Begin
+  Try
+    Lc_Qry := createQuery;
+    with Lc_Qry do
+    Begin
+      sql.add(concat(
+                'select p.cpf doc ',
+                'from tb_person p ',
+                '   inner join tb_accounting ac ',
+                '   on (ac.id = p.id) ',
+                'where ac.active = ''S'' and ac.tb_institution_id =:tb_institution_id ',
+                'union ',
+                'select c.cnpj doc ',
+                'from tb_company c ',
+                '   inner join tb_accounting acc ',
+                '   on (acc.id = c.id) ',
+                'where acc.active = ''S'' and acc.tb_institution_id =:tb_institution_id '
+      ));
+      ParamByName('tb_institution_id').AsInteger := Registro.Estabelecimento;
+      active := True;
+      fetchall;
+      exist := (RecordCount > 0);
+      if exist then
+      Begin
+        Result := FieldByname('EMP_CNPJ').AsString;
+      End
+      else
+      Begin
+        Result := '';
+      End;
+    end;
+  Finally
+    FinalizaQuery(Lc_Qry);
+  End;
+
 end;
 
 end.

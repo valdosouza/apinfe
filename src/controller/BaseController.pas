@@ -30,9 +30,11 @@ Type
     function insertObj<T: class>(Obj: T):Boolean;
     function updateObj<T: class>(Obj: T):Boolean;
     function deleteObj<T: class>(Obj: T):Boolean;
+    procedure replaceObj<T: class>(Obj: T);
     procedure SaveObj<T: class>(Obj: T);
     function getLastInsert<T: class>(Obj: T):Integer;
     function getNextByField<T: class>(Obj: T; Field: String;Intitution: Integer): Integer;
+    function Generator(pc_Gen: string): Integer;
     function getByField(strTable:String;field:String; Content:String):TFDQuery;
     procedure _assign<T: class>(ObjOri: T;ObjClone: T);
     procedure _getByKey<T: class>(Obj: T);
@@ -178,6 +180,26 @@ function TBaseController.GeneratePrimaryKey: string;
 begin
   Result := TGUID.Empty.NewGuid.ToString;
   Result := RemoveCaracterInformado(Result,['}','{','-']);
+end;
+
+function TBaseController.Generator(pc_Gen: string): Integer;
+var
+  Lc_SqlTxt: string;
+  Lc_Qry : TFDQuery;
+begin
+  TRy
+    Lc_Qry := createQuery;
+    with Lc_Qry do
+    Begin
+      CachedUpdates := True;
+      sql.Add('SELECT GEN_ID(' + pc_Gen + ',1) FROM RDB$DATABASE');
+      Active := True;
+      Result := fieldbyname('GEN_ID').AsInteger;
+      ApplyUpdates;
+    end;
+  Finally
+    FinalizaQuery(Lc_Qry);
+  End;
 end;
 
 function TBaseController.createQuery: TFDQuery;
@@ -374,6 +396,31 @@ begin
   End;
 End;
 
+
+procedure TBaseController.replaceObj<T>(Obj: T);
+Var
+  LcSql : String;
+  Lc_Qry :TFDQuery;
+begin
+  Try
+    Try
+      LcSql := TGenericDAO._Delete(Obj) ;
+      Lc_Qry := createQuery;
+      with Lc_Qry do
+      Begin
+        SQL.Clear;
+        SQL.Add ( TGenericDAO._Replace(Obj) );
+        ExecSQL;
+      End;
+    Except on E: Exception do
+      geralog('Base - ',E.Message);
+    end;
+  finally
+    FinalizaQuery(Lc_Qry);
+  end;
+
+
+end;
 
 function TBaseController.updateObj<T>(Obj: T):Boolean;
 Var

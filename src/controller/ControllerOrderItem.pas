@@ -8,10 +8,9 @@ interface
       tblOrderItemIcms,tblOrderItemCofins,tblOrderItemPis,tblOrderItemIpi,
       ControllerMerchandise, ControllerOrderItemDetail,
       ControllerStockStatement, ControllerOrderItemCofins, ControllerOrderItemPis,
-      ControllerOrderItemIcms,ControllerOrderItemII,ControllerOrderItemIPI;
+      ControllerOrderItemIcms,ControllerOrderItemII,ControllerOrderItemIPI,
+      ControllerOrderItemDetached, ControllerOrderItemIpiBack;
 Type
-
-
   TControllerOrderItem = Class(TBaseController)
     procedure clear;
   private
@@ -25,10 +24,11 @@ Type
     MovimentoEstoque : TControllerStockStatement;
     Icms   : TControllerOrderItemIcms;
     Ipi    : TControllerOrderItemIPI;
+    IpiBack : TControllerOrderItemIPIBAck;
     Cofins : TControllerOrderItemCofins;
     Pis    : TControllerOrderItemPis;
     II     : TControllerOrderItemII;
-
+    Avulso : TControllerOrderItemDetached;
     Lista: TListOrdemItem;
 
     constructor Create(AOwner: TComponent); override;
@@ -63,13 +63,13 @@ begin
   Lista := TListOrdemItem.Create;
   Mercadoria := TControllerMerchandise.Create(Self);
 
-  Icms   := TControllerOrderItemIcms.Create(Self);
-  Ipi    := TControllerOrderItemIPI.Create(Self);
-  Cofins := TControllerOrderItemCofins.Create(Self);
-  Pis    := TControllerOrderItemPis.Create(Self);
-  II     := TControllerOrderItemII.Create(Self);
-
-
+  Icms    := TControllerOrderItemIcms.Create(Self);
+  Ipi     := TControllerOrderItemIPI.Create(Self);
+  IpiBack := TControllerOrderItemIPIBAck.Create(Self);
+  Cofins  := TControllerOrderItemCofins.Create(Self);
+  Pis     := TControllerOrderItemPis.Create(Self);
+  II      := TControllerOrderItemII.Create(Self);
+  Avulso  := TControllerOrderItemDetached.Create(Self);
 end;
 
 function TControllerOrderItem.delete: boolean;
@@ -116,6 +116,7 @@ begin
   Detalhes.DisposeOf;
 
   Icms.DisposeOf;
+  IpiBack.DisposeOf;
   Ipi.DisposeOf;
   Cofins.DisposeOf;
   Pis.DisposeOf;

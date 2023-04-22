@@ -103,9 +103,14 @@ begin
                 ' AND  obs.tb_invoice_id =:tb_invoice_id ',
                 ' AND obs.terminal =:terminal '
               ));
+      if Registro.Tipo <> '' then
+        sql.Add(' and (kind =:kind) ');
+
       ParamByName('tb_institution_id').AsInteger  := Registro.Estabelecimento;
       ParamByName('tb_invoice_id').AsInteger      := Registro.NotaFiscal;
       ParamByName('terminal').AsInteger           := Registro.Terminal;
+      if Registro.Tipo <> '' then
+        ParamByName('kind').AsString           := Registro.Tipo;
       Active := True;
       FetchAll;
       lista.Clear;

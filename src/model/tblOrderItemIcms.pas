@@ -43,6 +43,7 @@ Type
     Fdischarge: Integer;
     Ftb_order_id: Integer;
     Fterminal: Integer;
+    Fapproximate_tax: Real;
     procedure setFaliq(const Value: Real);
     procedure setFAliq_rd(const Value: Real);
     procedure setFaliq_rd_base(const Value: Real);
@@ -77,6 +78,7 @@ Type
     procedure setFwithheld_value_st(const Value: Real);
     procedure setFtb_order_id(const Value: Integer);
     procedure setFterminal(const Value: Integer);
+    procedure setFapproximate_tax(const Value: Real);
 
   public
     [KeyField('tb_order_item_id')]
@@ -180,6 +182,9 @@ Type
 	  [FieldName('tb_cfop_id')]
     property Cfop: String read Ftb_cfop_id write setFtb_cfop_id;
 
+    [FieldName('approximate_tax')]
+    property ImpostoAproximado: Real read Fapproximate_tax write setFapproximate_tax;
+
     [FieldName('created_at')]
     property RegistroCriado: TDAteTime read Fcreated_at write setFcreated_at;
 
@@ -221,6 +226,11 @@ end;
 procedure TOrderItemIcms.setFaliq_st(const Value: Real);
 begin
   Faliq_st := Value;
+end;
+
+procedure TOrderItemIcms.setFapproximate_tax(const Value: Real);
+begin
+  Fapproximate_tax := Value;
 end;
 
 procedure TOrderItemIcms.setFbase_value(const Value: Real);

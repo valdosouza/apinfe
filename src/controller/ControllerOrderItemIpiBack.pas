@@ -1,51 +1,47 @@
-unit ControllerOrderItemIpi;
+unit ControllerOrderItemIpiBack;
 
 interface
 uses System.Classes, System.SysUtils,BaseController,
-      tblOrderItemIpi, tblEntity, FireDAC.Comp.Client,
+      tblOrderItemIpiBack, tblEntity, FireDAC.Comp.Client,
       FireDAC.Stan.Param, System.Generics.Collections;
 
 Type
-  TListaOrderItemIpi = TObjectList<TOrderItemIpi>;
-
-  TControllerOrderItemIpi = Class(TBaseController)
-
+  TControllerOrderItemIpiBack = Class(TBaseController)
     procedure clear;
   private
 
   public
-    Registro : TOrderItemIpi;
-    Lista : TListaOrderItemIpi;
+    Registro : TOrderItemIpiBack;
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
     function save:boolean;
     function delete:boolean;
     function deleteByOrdem:boolean;
-    function getByKey:Boolean;
+    function getbyKey:Boolean;
   End;
 
 implementation
 
-{ ControllerOrderItemIpi}
+{ ControllerOrderItemIcms}
 
-procedure TControllerOrderItemIpi.clear;
+
+procedure TControllerOrderItemIpiBack.clear;
 begin
   ClearObj(Registro);
 end;
 
-constructor TControllerOrderItemIpi.Create(AOwner: TComponent);
+constructor TControllerOrderItemIpiBack.Create(AOwner: TComponent);
 begin
-  inherited;
-  Registro := TOrderItemIpi.Create;
-  Lista := TListaOrderItemIpi.Create;
+inherited;
+  Registro := TOrderItemIpiBack.Create;
 end;
 
-function TControllerOrderItemIpi.delete: boolean;
+function TControllerOrderItemIpiBack.delete: boolean;
 begin
   deleteObj(Registro)
 end;
 
-function TControllerOrderItemIpi.deleteByOrdem: boolean;
+function TControllerOrderItemIpiBack.deleteByOrdem: boolean;
 Var
   Lc_Qry : TFDQuery;
 begin
@@ -56,35 +52,32 @@ begin
       Active := False;
       sql.Clear;
       sql.Add(concat(
-                'delete from tb_order_item_ipi ',
+                'delete from tb_order_item_ipi_back ',
                 'where ( tb_order_id =:order_id ) ',
                 ' and (tb_institution_id =:institution_id) '
       ));
       ParamByName('order_id').AsInteger := Registro.Ordem;
       ParamByName('institution_id').AsInteger := Registro.Estabelecimento;
       ExecSQL;
-
     End;
-
   Finally
     Lc_Qry.close;
     FReeandNil(Lc_Qry)
   End;
 end;
 
-destructor TControllerOrderItemIpi.Destroy;
+destructor TControllerOrderItemIpiBack.Destroy;
 begin
   Registro.DisposeOf;
-  Lista.DisposeOf;
   inherited;
 end;
 
-function TControllerOrderItemIpi.getByKey: Boolean;
+function TControllerOrderItemIpiBack.getbyKey: Boolean;
 begin
   _getByKey(Registro);
 end;
 
-function TControllerOrderItemIpi.save: boolean;
+function TControllerOrderItemIpiBack.save: boolean;
 begin
   try
     saveObj(Registro);
@@ -93,5 +86,6 @@ begin
     Result := False;
   end;
 end;
+
 
 end.

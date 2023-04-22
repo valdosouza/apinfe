@@ -16,6 +16,7 @@ Type
     Fname: String;
     Fupdated_at: TDAteTime;
     Fcreated_at: TDAteTime;
+    FAliquota: real;
 
     procedure setFid(Value: Integer);
     procedure setFtb_country_id(Value: Integer);
@@ -23,6 +24,7 @@ Type
     procedure setFabbreviation(Value: String);
     procedure setFcreated_at(Value: Tdatetime);
     procedure setFupdated_at(Value: Tdatetime);
+    procedure setFaliquota(const Value: real);
 
   public
 
@@ -38,6 +40,9 @@ Type
 
     [FieldName('name')]
     property Nome: String read Fname write setFname;
+
+    [FieldName('aliquota')]
+    property Aliquota: real read FAliquota write setFaliquota;
 
     [FieldName('created_at')]
     property RegistroCriado: TDAteTime read Fcreated_at write setFcreated_at;
@@ -66,6 +71,11 @@ end;
 procedure TState.setFtb_country_id(Value: Integer);
 begin
   Ftb_country_id := Value;
+end;
+
+procedure TState.setFaliquota(const Value: real);
+begin
+  FAliquota := Value;
 end;
 
 procedure TState.setFcreated_at(Value: Tdatetime);

@@ -15,6 +15,7 @@ Type
     Fcreated_at: TDAteTime;
     Fupdated_at: TDAteTime;
     Fterminal: Integer;
+    FKind: String;
     procedure setFcreated_at(const Value: TDAteTime);
     procedure setFId(const Value: Integer);
     procedure setFobs(const Value: String);
@@ -22,6 +23,7 @@ Type
     procedure setFtb_invoice_id(const Value: Integer);
     procedure setFupdated_at(const Value: TDAteTime);
     procedure setFterminal(const Value: Integer);
+    procedure setFKind(const Value: String);
 
   public
     [FieldName('id')]
@@ -39,6 +41,9 @@ Type
     [FieldName('terminal')]
     [KeyField('terminal')]
     property Terminal: Integer read Fterminal write setFterminal;
+
+    [FieldName('kind')]
+    property Tipo: String read FKind write setFKind;
 
     [FieldName('obs')]
     property Observacao: String read Fobs write setFobs;
@@ -64,6 +69,11 @@ end;
 procedure TInvoiceObs.setFId(const Value: Integer);
 begin
   FId := Value;
+end;
+
+procedure TInvoiceObs.setFKind(const Value: String);
+begin
+  FKind := Value;
 end;
 
 procedure TInvoiceObs.setFobs(const Value: String);

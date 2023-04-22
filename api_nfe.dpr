@@ -35,27 +35,30 @@ uses
   ControllerNfe in 'src\controller\ControllerNfe.pas',
   ControllerNfeConfig in 'src\controller\ControllerNfeConfig.pas',
   ControllerNfe55 in 'src\controller\ControllerNfe55.pas',
-  ControllerNfe55Sale in 'src\controller\ControllerNfe55Sale.pas';
+  ControllerNfe55Sale in 'src\controller\ControllerNfe55Sale.pas',
+  ControllerStateMvaNcm in 'src\controller\ControllerStateMvaNcm.pas',
+  tblStateFcpNcm in 'src\model\tblStateFcpNcm.pas',
+  ControllerStateFcpNcm in 'src\controller\ControllerStateFcpNcm.pas',
+  tblOrderItemIcmsFcp in 'src\model\tblOrderItemIcmsFcp.pas',
+  ControllerOrderItemIcmsFcp in 'src\controller\ControllerOrderItemIcmsFcp.pas',
+  tblOrderItemIpiBack in 'src\model\tblOrderItemIpiBack.pas',
+  ControllerOrderItemIpiBack in 'src\controller\ControllerOrderItemIpiBack.pas',
+  ControllerNfeSeries in 'src\controller\ControllerNfeSeries.pas',
+  tblNfeSequences in 'src\model\tblNfeSequences.pas',
+  ControllerNfeSequences in 'src\controller\ControllerNfeSequences.pas';
 
 var
   DBConnection : TProviderConnection;
-
-
-
   function Init:boolean;
   Begin
     DBConnection := TProviderConnection.Create(nil);
-
   End;
 
 
 begin
   Init;
-
   THorse.Use(HorseJWT(TArqIni.getSecret));
-
   THorse.Use(Jhonson());
-
   TEndpointInvoicingSale.Registrar;
   TEndpointAuthorizationSale.Registrar;
 

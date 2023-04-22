@@ -5,7 +5,7 @@ interface
 uses System.Classes, System.SysUtils,BaseController,
       tblAddress,FireDAC.Comp.Client,Md5, FireDAC.Stan.Param,
       ControllerCountry,ControllerState,ControllerCity,
-  System.Generics.Collections;
+      System.Generics.Collections;
 
 
 Type
@@ -21,6 +21,7 @@ Type
     Estado : TControllerState;
     Cidade : TControllerCity;
     Lista : TListAddress;
+
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
     function save:boolean;
@@ -52,6 +53,7 @@ begin
   Cidade := TControllerCity.Create(self);
   Lista := TListAddress.Create;
 
+
 end;
 
 
@@ -75,8 +77,6 @@ begin
   Lista.DisposeOf;
   inherited;
 end;
-
-
 
 function TControllerAddress.insert: boolean;
 begin

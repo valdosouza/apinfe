@@ -15,6 +15,7 @@ type
     public
       class function _Select<T: class>(Obj: T; Fields:String):String;
       class function _Insert<T: class>(Obj: T):String;
+      class function _Replace<T: class>(Obj: T):String;
       class function _Update<T: class>(Obj: T):String;
       class function _Delete<T: class>(Obj: T):String;
       class function _Clear<T: class>(Obj: T):String;
@@ -255,6 +256,77 @@ begin
 end;
 
 
+
+class function TGenericDAO._Replace<T>(Obj: T): String;
+var
+  Contexto: TRttiContext;
+  TypObj: TRttiType;
+  Prop: TRttiProperty;
+  strReplace, strFields,strParams, strValues, StrKeys: String;
+  Atributo: TCustomAttribute;
+  Lc_Value : String;
+  Lc_IndKey : Integer;
+begin
+  Try
+    strReplace  := '';
+    strParams   := '';
+    StrKeys     := '';
+    strReplace := ' UPDATE OR INSERT INTO  ' + GetTableName(Obj);
+    Contexto := TRttiContext.Create;
+    TypObj := Contexto.GetType(TObject(Obj).ClassInfo);
+    Lc_IndKey   := 0;
+    for Prop in TypObj.GetProperties do
+    begin
+      for Atributo in Prop.GetAttributes do
+      begin
+        if Atributo is KeyField then
+        Begin
+          if ( Lc_IndKey = 0 ) then
+            StrKeys := FieldName(Atributo).Name
+          else
+            StrKeys := concat(StrKeys , ',' ,FieldName(Atributo).Name);
+          inc(Lc_IndKey);
+        End
+        else
+        BEgin
+          if Atributo is FieldName then
+          begin
+            Lc_Value := TGenericDAO.GetValues(Obj,Prop);
+            if (Trim(Lc_Value) <> '''''') or (FieldName(Atributo).Name = 'updated_at') or (FieldName(Atributo).Name = 'created_at') then
+            Begin
+              if (FieldName(Atributo).Name = 'updated_at') or (FieldName(Atributo).Name = 'created_at')  then
+              Begin
+                strParams := ''''+ formatdatetime('yyyy-mm-dd hh:nn:ss', Now)+'''';
+              End
+              else
+              Begin
+                strFields := strFields + FieldName(Atributo).Name  + ',';
+                strParams := strParams + Lc_Value + ',';
+              End;
+            End
+            else
+            Begin
+              //Quando é branco enviaar null
+              //PRecisamos desta parte por que o usuario deve ter a opção de hora informar um dado e outra hora retira-lo
+              if not (FieldName(Atributo).Name = 'created_at') then
+              Begin
+                strFields := strFields + FieldName(Atributo).Name  + ',';
+                strParams := strParams + ' null ,';
+              End;
+            End;
+          end;
+        End;
+      end;
+    end;
+    strFields := Copy(strFields, 1, Length(strFields) - 1);
+    strParams := Copy(strParams, 1, Length(strParams) - 1);
+    strReplace := concat(strReplace , ' ( ' , strFields , ' ) VALUES ( ' , strParams , ' )');
+    strReplace := concat(strReplace , ' MATCHING ( ' , StrKeys , ' );');
+    REsult := strReplace;
+  Except on E: Exception do
+    _geralog(concat('GenericDao - Insert - ',E.Message));
+  end;
+end;
 
 class function TGenericDAO._Update<T>(Obj: T):String;
 var

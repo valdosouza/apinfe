@@ -8,36 +8,40 @@ uses
     pcnConversao,
     ACBrNFeDANFEClass, pcnNFeW, pcnLeitor,  ACBrUtil,
     ACBrNFeNotasFiscais, pcnNFe, ACBrNFeWebServices, ACBrNFeDANFeRLClass,
-    System.SysUtils,ControllerCtrlIcmsST,ControllerInvoice;
+    System.SysUtils,ControllerCtrlIcmsST,ControllerInvoice,ControllerStateMvaNcm,
+    ControllerAccounting, ControllerNfesequences,FireDAC.Comp.Client;
 type
 
   TControllerNfe = class(TBaseController)
     private
 
       procedure VerifyDuplicidadeDeChaveNFE;
-
-
-    procedure setFEstabelecimento(const Value: Integer);
-
+      procedure setFEstabelecimento(const Value: Integer);
+      procedure setFMostraLote(const Value: boolean);
+      procedure IdentificaEntrega(dfent:TEntrega);
+    procedure setFCarregaLogo(const Value: Boolean);
     protected
       FInvoice : TControllerInvoice;
       FNfe : TAcbrNfe;
       FCtrlInstitution : TControllerInstitution;
       FCtrlICMSST : TControllerCtrlIcmsST;
+      FNfeSequences : TControllerNfeSequences;
       FFileXML : String;
       FCodigoNfeRetorno : Integer;
       FCodigoInternoRetorno : Integer;
       FNFeMensagemRetorno : String;
       FDataRetorno : TDateTime;
       FChaveDuplicada : String;
+      FMostraLote: boolean;
+      FCarregaLogo: Boolean;
       procedure UpdateInvoiceDateTime;Virtual;
       procedure handlReturn;Virtual;
       procedure UpdateRetornoNFe65;Virtual;
       procedure UpdateRetornoNFe55;Virtual;
 
-      procedure GeraDanfeIde(dfide:TIde;Oper_Consulta:Boolean);Virtual;
-      procedure GeraDanfeEmi(dfemi:TEmit;Oper_Consulta:Boolean);Virtual;
-      procedure GeraDanfeDes(dfdes:TDest;Oper_Consulta:Boolean);Virtual;
+      procedure GeraDanfeIde(dfide:TIde);Virtual;
+      procedure GeraDanfeEmi(dfemi:TEmit);Virtual;
+      procedure GeraDanfeDes(dfdes:TDest);Virtual;
       procedure GeraDanfeCasasDecimais;Virtual;
       procedure GeraDanfeItensProdServ(itens:Tprod; Item:Integer);Virtual;
       function  GeraDanfeProdInfoAdicLote(itens:Tprod; Item:Integer):String;Virtual;
@@ -52,7 +56,8 @@ type
       procedure GeraDanfeImpostoSimplesNacional(imposto:TImposto);Virtual;
       procedure GeraDanfeICMS(imposto:TImposto);Virtual;
       procedure GeraDanfePartilhaFCP(Emit:TEmit;Ide:TIde;Dest:TDest;Prod:TProd;imposto:TImposto);Virtual;
-      procedure GeraDanfeIItens(itens:Tprod);Virtual;
+      procedure GetDanfeItens;Virtual;
+      procedure GeraDanfeItens();Virtual;
       procedure GeraDanfeIPI(imposto:TImposto);Virtual;
       procedure GeraDanfeIPIDevolvido;Virtual;
       procedure GeraDanfeII(imposto:TImposto);Virtual;
@@ -63,10 +68,11 @@ type
       procedure GeraDanfeTransportadora;Virtual;
       procedure GeraDanfeFormaPagto;Virtual;
       procedure GeraDanfeCobranca;Virtual;
-      procedure GeraDanfeInfAdic;Virtual;
-      procedure GeraDanfeComercioExterior;Virtual;
-      procedure GeraResponsabelTécnico;Virtual;
-      procedure GeraCNPJAutorizados;Virtual;
+      procedure GeraDanfeInfAdicContribuinte;Virtual;
+      procedure GeraDanfeInfAdicFisco;Virtual;
+      procedure GeraDanfeComercioExterior;
+      procedure GeraResponsabelTécnico;
+      procedure GeraCNPJAutorizados;
       Function  GeraDadosDanfe():Boolean;
 
     public
@@ -76,6 +82,8 @@ type
       function getAuthorization:boolean;
       function chekAuthorization:boolean;
       property Estabelecimento : Integer write setFEstabelecimento;
+      property MostraLote : boolean read FMostraLote write setFMostraLote;
+      property CarregaLogo : Boolean read FCarregaLogo write setFCarregaLogo;
   end;
 implementation
 
@@ -84,6 +92,7 @@ implementation
 function TControllerNfe.chekAuthorization: boolean;
 begin
   inherited;
+
 end;
 
 constructor TControllerNfe.Create(AOwner: TComponent);
@@ -92,115 +101,120 @@ begin
   FNfe := TAcbrNfe.Create(self);
   FCtrlInstitution := TControllerInstitution.Create(self);
   FCtrlICMSST := TControllerCtrlIcmsST.create(Self);
+  FNfeSequences := TControllerNfeSequences.create(Self);
+  FMostraLote := False;
 end;
 
 destructor TControllerNfe.Destroy;
 begin
+  FNfeSequences.DisposeOf;
+  FNfe.DisposeOf;
+  FCtrlInstitution.DisposeOf;
+  FCtrlICMSST.DisposeOf;
   inherited;
 end;
 
 procedure TControllerNfe.GeraCNPJAutorizados;
+Var
+  LcContador : TControllerAccounting;
+  Lc_CNPj : String;
 begin
-
+  try
+    LcContador := TControllerAccounting.create(nil);
+    with FNfe.NotasFiscais[0].Nfe do
+    Begin
+      Lc_CNPj := LcContador.getCNPJ;
+      if (Lc_CNPj <> Dest.CNPJCPF) then
+      Begin
+        if Lc_CNPj <> '' then
+          autXML.New.CNPJCPF := Lc_CNPj;
+      End;
+    End;
+  finally
+    LcContador.disposeOf;
+  end;
 end;
 
 function TControllerNfe.GeraDadosDanfe(): Boolean;
 Var
   Lc_Aux: String;
   Lc_Ok: Boolean;
-  Lc_Obs: TStringList;
   Lc_Nr_Item: Integer;
-
   Lc_I: Integer;
   Lc_Aq_Icms_Partilha: Real;
 Begin
-  //Não aplicar o DisposeOf quando o create for Self
-  {
-  REsult := True;
-  Lc_Obs := TStringList.Create;
-  // ========================== A - Dados da Nota Fiscal eletrônica =========================================
-  // Componente está tratando
-  // ========================== B - Identificação da Nota Fiscal eletrônica =================================
-  FNfe.NotasFiscais.Clear;
-  //Fr_Principal.Nfe.NotasFiscais[0].NFe.autXML
-  with FNfe.NotasFiscais.Add.Nfe do
-  begin
-    infNFe.ID := '0';
+  Try
+    //Não aplicar o DisposeOf quando o create for Self
+    REsult := True;
+    // ========================== A - Dados da Nota Fiscal eletrônica =========================================
+    // Componente está tratando
+    FNfe.NotasFiscais.Clear;
+    //Fr_Principal.Nfe.NotasFiscais[0].NFe.autXML
+    with FNfe.NotasFiscais.Add.Nfe do
+    begin
+      //Controle Id da NFE que é diferente no numero da nota que deve ser sequencial e dirente um do outro
+      FNfeSequences.Registro.Estabelecimento := FInvoice.Registro.Estabelecimento;
+      FNfeSequences.Registro.Terminal        := FInvoice.Registro.Terminal;
+      FNfeSequences.Registro.Serie           := FInvoice.Registro.Serie.ToInteger;
+      FNfeSequences.Registro.Ordem           := FInvoice.Registro.Codigo;
+      infNFe.ID := FNfeSequences.get;
+      //Ativa os itens da nota e o primeiro reistro do ICMS para as primeiras verificações
+      GetDanfeItens;
+      // ========================== B - Identificação da Nota Fiscal eletrônica =================================
+      GeraDanfeIde(Ide);
+      // ========================== C - Identificação do Emitente da Nota Fiscal eletrônica =========================
+      GeraDanfeEmi(Emit);
+      // ========================== D - Identificação do Fisco Emitente da NF-e ===============================
 
-    GeraDanfeIde(Ide,Pc_Oper_Consulta);
-    // ========================== C - Identificação do Emitente da Nota Fiscal eletrônica =========================
-    GeraDanfeEmi(Emit,Pc_Oper_Consulta);
-    // ========================== D - Identificação do Fisco Emitente da NF-e ===============================
+      // ========================== E - Identificação do Destinatário da Nota Fiscal eletrônica =========================
+      GeraDanfeDes(Dest);
+      // ========================== F - Identificação do Local de Retirada ====================================
 
-    // ========================== E - Identificação do Destinatário da Nota Fiscal eletrônica =========================
-    GeraDanfeDes(Dest,Pc_Oper_Consulta);
-    // ========================== F - Identificação do Local de Retirada ====================================
+      // ========================== G - Identificação do Local de Entrega =====================================
+  //    Pc_IdentificaEntrega( Qr_Nota.FieldByName('EMP_CODIGO').AsInteger,Entrega);
+      // ========================== Definie quantas casas decimais ============================================
+      GeraDanfeCasasDecimais;
+      // ========================== H - Detalhamento de Produtos e Serviços da NF-e ===========================
 
-    // ========================== G - Identificação do Local de Entrega =====================================
-    Pc_IdentificaEntrega( Qr_Nota.FieldByName('EMP_CODIGO').AsInteger,Entrega);
-    // ========================== Definie quantas casas decimais ============================================
-    Pc_SelecionaItensNota(Qr_Nota.FieldByName('NFL_CODIGO').AsInteger);
-    // Define Quantas Casas Decimais para o Valor
-    GeraDanfeCasasDecimais;
-    // ========================== H - Detalhamento de Produtos e Serviços da NF-e ===========================
-
-    // ========================== I - Produtos e Serviços da NF-e ===========================================
-    GeraDanfeIItens;
-    // ========================== V - Informações adicionais ============================================
-    // tratado na tag I - Produtos e Serviços da NF-e
-    // ========================== W - Valores Totais da NF-e ================================================
-    GeraDanfeTotalizador;
-    // ======================s==== X - Informações do Transporte da NF-e =====================================
-    GeraDanfeTransportadora;
-    // ========================== Y – Dados da Cobrança =====================================================
-    GeraDanfeFormaPagto;
-    if not (TipoOperacao = 'NFC-e') then
+      // ========================== I - Produtos e Serviços da NF-e ===========================================
+      GeraDanfeItens();
+      // ========================== V - Informações adicionais ============================================
+      // tratado na tag I - Produtos e Serviços da NF-e
+      // ========================== W - Valores Totais da NF-e ================================================
+      GeraDanfeTotalizador;
+      // ======================s==== X - Informações do Transporte da NF-e =====================================
+      GeraDanfeTransportadora;
+      // ========================== Y – Dados da Cobrança =====================================================
+      GeraDanfeFormaPagto;
       GeraDanfeCobranca;
+      // ========================== Z - Informações Adicionais da NF-e ========================================
+      GeraDanfeInfAdicContribuinte;
+      GeraDanfeInfAdicFisco;
 
-    // ========================== Z - Informações Adicionais da NF-e ========================================
-    GeraDanfeInfAdic;
-    // ========================== ZA - Informações de Comércio Exterior =====================================
-    GeraDanfeComercioExterior;
-    // ========================== ZB - Informações de Compras ===============================================
+      // ========================== ZA - Informações de Comércio Exterior =====================================
+      GeraDanfeComercioExterior;
+      // ========================== ZB - Informações de Compras ===============================================
 
-    // ========================== ZC - Informações do Registro de Aquisição de Cana =========================
+      // ========================== ZC - Informações do Registro de Aquisição de Cana =========================
 
-    // ========================== ZZ - Informações da Assinatura Digital ====================================
-    GeraResponsabelTécnico;
-    GeraCNPJAutorizados;
-  end;
+      // ========================== ZZ - Informações da Assinatura Digital ====================================
+      GeraResponsabelTécnico;
+      GeraCNPJAutorizados;
+    // ======================================== Finalização ===================================================
+      FNfe.NotasFiscais.Items[0].GerarXML;
+      FFileXML := Copy(FNfe.NotasFiscais.Items[0].Nfe.infNFe.ID,(Length(FNfe.NotasFiscais.Items[0].Nfe.infNFe.ID) - 44) + 1, 44) + '-NFe.xml';
+      FNfe.NotasFiscais.GerarNFe;
 
-
-    FNfe.DANFE.Protocolo := '';
-    if not Pc_GeraDadosDanfe(Pc_Oper_Consulta) then
+      FNfe.NotasFiscais.GravarXML(concat(FCtrlInstitution.PathPublico + '\xml\nfe',FFileXML) );
+      FNfe.NotasFiscais.Assinar;
+      FNfe.NotasFiscais.Validar;
+    end;
+  except
+    on E: Exception do
     Begin
-      Exit;
-    end;
-    Add('SALVANDO O XML REFERENTE A NOTA...');
-    Proc.Update;
-    // Faz a gravação do XML no Banco de dados
-    Fr_Principal.Nfe.NotasFiscais.Items[0].GerarXML;
-    Lc_FileXML := Copy(Fr_Principal.Nfe.NotasFiscais.Items[0].Nfe.infNFe.ID,(Length(Fr_Principal.Nfe.NotasFiscais.Items[0].Nfe.infNFe.ID) - 44) + 1, 44) + '-NFe.xml';
-
-    // Fr_Principal.Nfe.NotasFiscais.Items[0].GravarXML();
-    Add('VALIDANDO O XML REFERENTE A NOTA...');
-    Proc.Update;
-    Try
-      Fr_Principal.Nfe.NotasFiscais.GerarNFe;
-      //Fr_Principal.Nfe.NotasFiscais.GravarXML(concat('c:\temp\',Lc_FileXML) );
-      Fr_Principal.Nfe.NotasFiscais.Assinar;
-      Fr_Principal.Nfe.NotasFiscais.Validar;
-     Result := Lc_FileXML
-    except
-      on E: Exception do
-      Begin
-        Add(E.ClassName + ' Erro : ' + E.Message);
-        Result := '';
-        Add('Problemas ao gerar e/ou validar o arquivo XML...');
-      end;
+      FMensagemRetorno.AddPair('Mensagem', E.Message);
     end;
   end;
-  }
 end;
 
 procedure TControllerNfe.GeraDanfeCasasDecimais;
@@ -225,15 +239,22 @@ end;
 
 procedure TControllerNfe.GeraDanfeComercioExterior;
 begin
-
+  with FNfe.NotasFiscais[0].Nfe do
+  Begin
+    if (Copy(Det[0].Prod.CFOP, 1, 1) = '7') then // CFOP de Exportação (inicia por 7)
+    Begin
+      exporta.UFembarq    := FCtrlInstitution.Fiscal.Endereco.Estado.Registro.Abreviatura;
+      exporta.xLocEmbarq  := FCtrlInstitution.Fiscal.Endereco.Cidade.Registro.Nome;
+    end;
+  End;
 end;
 
-procedure TControllerNfe.GeraDanfeDes(dfdes: TDest; Oper_Consulta: Boolean);
+procedure TControllerNfe.GeraDanfeDes(dfdes: TDest);
 begin
 
 end;
 
-procedure TControllerNfe.GeraDanfeEmi(dfemi: TEmit; Oper_Consulta: Boolean);
+procedure TControllerNfe.GeraDanfeEmi(dfemi: TEmit);
 begin
 
 end;
@@ -248,8 +269,9 @@ begin
 
 end;
 
-procedure TControllerNfe.GeraDanfeIde(dfide: TIde; Oper_Consulta: Boolean);
+procedure TControllerNfe.GeraDanfeIde(dfide: TIde);
 Begin
+
 end;
 
 procedure TControllerNfe.GeraDanfeII(imposto: TImposto);
@@ -257,7 +279,7 @@ begin
 
 end;
 
-procedure TControllerNfe.GeraDanfeIItens(itens: Tprod);
+procedure TControllerNfe.GeraDanfeItens();
 begin
 
 end;
@@ -282,7 +304,13 @@ begin
 
 end;
 
-procedure TControllerNfe.GeraDanfeInfAdic;
+
+procedure TControllerNfe.GeraDanfeInfAdicContribuinte;
+begin
+
+end;
+
+procedure TControllerNfe.GeraDanfeInfAdicFisco;
 begin
 
 end;
@@ -359,7 +387,13 @@ end;
 
 procedure TControllerNfe.GeraResponsabelTécnico;
 begin
-
+  with FNfe.NotasFiscais[0].Nfe do
+  Begin
+    infRespTec.CNPJ := '07742094000113';
+    infRespTec.xContato := 'Florisvaldo Domingues de Souza';
+    infRespTec.email := 'valdo@setes.com.br';
+    infRespTec.fone := '41999112072';
+  End;
 end;
 
 function TControllerNfe.getAuthorization:boolean;
@@ -386,6 +420,11 @@ begin
   finally
     handlReturn;
   End;
+end;
+
+procedure TControllerNfe.GetDanfeItens;
+begin
+
 end;
 
 procedure TControllerNfe.handlReturn;
@@ -419,15 +458,99 @@ begin
 end;
 
 
+procedure TControllerNfe.IdentificaEntrega(dfent: TEntrega);
+var
+  Lc_SqlTxt: String;
+  Lc_Cd_Endereco, Lc_Cd_Entrega: Integer;
+  Lc_qt_Endereco: Integer;
+  Lc_Qry : TFDQuery;
+begin
+  Try
+    Lc_Qry := createQuery;
+    with Lc_Qry do
+    Begin
+      sql.Add(concat(
+              'SELECT id, main ',
+              'FROM tb_address ',
+              'WHERE id =:id  and kind = ''COMERCIAL'' '
+      ));
+      ParamByName('id').AsInteger := FInvoice.Registro.Emitente;
+      Active := True;
+      FetchAll;
+      First;
+      Lc_qt_Endereco := recordcount;
+      if Lc_qt_Endereco > 1 then
+        Locate('id', 'S', []);
+      Lc_Cd_Endereco := FieldByName('id').AsInteger;
+
+      Active := False;
+      sql.Clear;
+      Lc_SqlTxt := '';
+      sql.Add(concat(
+              'Select adr.id, adr.street, adr.nmbr, adr.complement, ',
+              'adr.neighborhood, adr.zip_code, cdd.name, cdd.ibge, ',
+              ' ste.abbreviation, osp.tb_address_id ',
+              ' from tb_address adr ',
+              '  inner join tb_city cdd ',
+              '  ON (cdd.id = adr.tb_city_id) ',
+              '  inner join tb_state ste ',
+              '  ON (ste.id = adr.tb_state_id) ',
+              '  inner join tb_order_shipping osp ',
+              '  ON (osp.tb_address_id = adr.id) ',
+              'where osp.id =:id ',
+              'and osp.tb_institution_id =:tb_institution_id '
+      ));
+      ParamByName('id').AsInteger := FInvoice.Registro.Codigo;
+      ParamByName('tb_institution_id').AsInteger := FInvoice.Registro.Estabelecimento;
+      Active := True;
+      FetchAll;
+
+      // Neste caso tem apenas um endereço e não precisa comparar
+      if (Lc_qt_Endereco > 1) then
+      Begin
+        Lc_Cd_Entrega := FieldByName('tb_address_id').AsInteger;
+
+        If Lc_Cd_Endereco <> Lc_Cd_Entrega then
+        begin
+          with dfent do
+          begin
+            //CNPJCPF := FieldByName('END_CNPJ').AsString; verificar se campo é obrigatorio
+            xLgr    := FieldByName('street').AsString;
+            nro     := FieldByName('nmbr').AsString;
+            xCpl    := FieldByName('complement').AsString;
+            xBairro := FieldByName('neighborhood').AsString;
+            cMun    := FieldByName('ibge').AsInteger;
+            xMun    := FieldByName('name').AsString;
+            UF      := FieldByName('abbreviation').AsString;
+          end;
+        end;
+      End;
+    End;
+  Finally
+    FinalizaQuery(Lc_Qry);
+  End;
+end;
+
 procedure TControllerNfe.inicializa;
 begin
 
+end;
+
+procedure TControllerNfe.setFCarregaLogo(const Value: Boolean);
+begin
+  FCarregaLogo := Value;
 end;
 
 procedure TControllerNfe.setFEstabelecimento(const Value: Integer);
 begin
   FCtrlInstitution.Registro.Codigo := Value;
   FCtrlInstitution.getAllByKey;
+  FCtrlInstitution.getRepository(true,'');
+end;
+
+procedure TControllerNfe.setFMostraLote(const Value: boolean);
+begin
+  FMostraLote := Value;
 end;
 
 procedure TControllerNfe.UpdateInvoiceDateTime;

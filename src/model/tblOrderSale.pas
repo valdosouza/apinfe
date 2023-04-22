@@ -45,7 +45,6 @@ Type
     property Terminal: Integer read Fterminal write setFterminal;
 
     [FieldName('tb_salesman_id')]
-    [KeyField('tb_salesman_id')]
     property Vendedor: Integer read Ftb_salesman_id write setFtb_salesman_id;
 
     [FieldName('number')]

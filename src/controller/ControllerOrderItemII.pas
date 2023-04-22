@@ -21,6 +21,7 @@ Type
     function save:boolean;
     function delete:boolean;
     function deleteByOrdem: boolean;
+    function getByKey:Boolean;
 
   End;
 
@@ -75,6 +76,11 @@ begin
   Registro.DisposeOf;
   Lista.DisposeOf;
   inherited;
+end;
+
+function TControllerOrderItemII.getByKey: Boolean;
+begin
+  _getByKey(Registro);
 end;
 
 function TControllerOrderItemII.save: boolean;

@@ -205,6 +205,8 @@ begin
       if Parametro.Finaceiro.Terminal > 0 then
         sql.add(' and (terminal =:terminal)' );
 
+      if Parametro.Finaceiro.Ordem > 0 then
+        sql.add(' and (id =:id)' );
 
       if Trim(Parametro.UltimaAtualizacao) <> '' then
       Begin
@@ -223,9 +225,11 @@ begin
       if Parametro.Finaceiro.Terminal > 0 then
         parambyname('terminal').AsInteger := Parametro.Finaceiro.Terminal;
 
+      if Parametro.Finaceiro.Ordem > 0 then
+        parambyname('id').AsInteger := Parametro.Finaceiro.Ordem;
+
       if Trim(Parametro.UltimaAtualizacao) <> '' then
         parambyname('updated_at').AsString := Parametro.UltimaAtualizacao;
-
 
       Active := True;
       FetchAll;

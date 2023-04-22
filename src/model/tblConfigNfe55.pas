@@ -17,6 +17,7 @@ Type
     FsendNfeToyourSelf: String;
     Freceipt_posit: String;
     Fcreated_at: TDAteTime;
+    Fhide_first_parcel: String;
     procedure setFcreated_at(const Value: TDAteTime);
     procedure setForientation(const Value: String);
     procedure setFreceipt_posit(const Value: String);
@@ -26,6 +27,7 @@ Type
     procedure setFset_invoice(const Value: String);
     procedure setFtb_institution_id(const Value: Integer);
     procedure setFupdated_at(const Value: TDAteTime);
+    procedure setFhide_first_parcel(const Value: String);
 
   public
 
@@ -44,6 +46,9 @@ Type
 
     [FieldName('set_duplicate')]
     property Duplicata: String read Fset_duplicate write setFset_duplicate;
+
+    [FieldName('hide_first_parcel')]
+    property OcultarPrimeiraParcela : String read Fhide_first_parcel write setFhide_first_parcel;
 
     [FieldName('sendNfeToaccounting')]
     property EnviarContabilidade: String read FsendNfeToaccounting write setFsendNfeToaccounting;
@@ -68,6 +73,11 @@ implementation
 procedure TConfigNfe55.setFcreated_at(const Value: TDAteTime);
 begin
   Fcreated_at := Value;
+end;
+
+procedure TConfigNfe55.setFhide_first_parcel(const Value: String);
+begin
+  Fhide_first_parcel := Value;
 end;
 
 procedure TConfigNfe55.setForientation(const Value: String);

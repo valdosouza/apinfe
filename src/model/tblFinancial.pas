@@ -49,7 +49,7 @@ Type
     property Parcela: Integer read Fparcel write setFparcel;
 
     [FieldName('dt_expiration')]
-    property DataExpiracao: TDateTime read Fdt_expiration write setFdt_expiration;
+    property DataVencimento: TDateTime read Fdt_expiration write setFdt_expiration;
 
     [FieldName('tb_payment_types_id')]
     property TipoPagamento: Integer read Ftb_payment_types_id write setFtb_payment_types_id;

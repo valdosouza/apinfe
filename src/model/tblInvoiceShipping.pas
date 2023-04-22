@@ -16,13 +16,14 @@ Type
     Fupdated_at: TDatetime;
     Fvehicle_plaque: String;
     Fnet_weight: String;
-    Ftotal_qtty: Real;
+
     Ftb_institution_id: Integer;
     Fstate_plaque: String;
     Fbrand_tag: String;
     Fsort_tag: String;
     Fcreated_at: TDatetime;
     Fterminal: Integer;
+    Ftotal_qtty: Integer;
     procedure setFbrand_tag(const Value: String);
     procedure setFcreated_at(const Value: TDatetime);
     procedure setFgross_weight(const Value: String);
@@ -32,11 +33,12 @@ Type
     procedure setFsort_tag(const Value: String);
     procedure setFstate_plaque(const Value: String);
     procedure setFtb_institution_id(const Value: Integer);
-    procedure setFtotal_qtty(const Value: Real);
+
     procedure setFupdated_at(const Value: TDatetime);
     procedure setFvehicle_plaque(const Value: String);
     procedure setFvolume_number(const Value: String);
     procedure setFterminal(const Value: Integer);
+    procedure setFtotal_qtty(const Value: Integer);
 
 
 
@@ -54,7 +56,7 @@ Type
     property Terminal: Integer read Fterminal write setFterminal;
 
     [FieldName('total_qtty')]
-    property Quantidade: Real read Ftotal_qtty write setFtotal_qtty;
+    property Quantidade: Integer read Ftotal_qtty write setFtotal_qtty;
 
     [FieldName('sort_tag')]
     property Classificacao: String read Fsort_tag write setFsort_tag;
@@ -142,7 +144,8 @@ begin
   Fterminal := Value;
 end;
 
-procedure TInvoiceShipping.setFtotal_qtty(const Value: Real);
+
+procedure TInvoiceShipping.setFtotal_qtty(const Value: Integer);
 begin
   Ftotal_qtty := Value;
 end;

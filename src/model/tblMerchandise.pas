@@ -25,6 +25,7 @@ Type
     Fkind: String;
     Fsource: String;
     Fcreated_at: TDAteTime;
+    Fmanuf_sign_ind_scale: String;
     procedure setFapplication(const Value: String);
     procedure setFcest(const Value: String);
     procedure setFcomposition(const Value: String);
@@ -42,6 +43,7 @@ Type
     procedure setFtb_brand_id(const Value: Integer);
     procedure setFtb_institution_id(const Value: Integer);
     procedure setFupdated_at(const Value: TDAteTime);
+    procedure setFmanuf_sign_ind_scale(const Value: String);
 
 
 
@@ -92,6 +94,9 @@ Type
 
     [FieldName('composition')]
     property TipoComposicao: String read Fcomposition write setFcomposition;
+
+    [FieldName('manuf_sign_ind_scale')]
+    property ProduzidoEscalaRelevante : String Read Fmanuf_sign_ind_scale write setFmanuf_sign_ind_scale;
 
     [FieldName('created_at')]
     property RegistroCriado: TDAteTime read Fcreated_at write setFcreated_at;
@@ -166,6 +171,11 @@ end;
 procedure TMerchandise.setFkind_tributary(const Value: String);
 begin
   Fkind_tributary := Value;
+end;
+
+procedure TMerchandise.setFmanuf_sign_ind_scale(const Value: String);
+begin
+  Fmanuf_sign_ind_scale := Value;
 end;
 
 procedure TMerchandise.setFprint(const Value: String);

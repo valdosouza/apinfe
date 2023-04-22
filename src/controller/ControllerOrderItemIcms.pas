@@ -3,7 +3,7 @@ unit ControllerOrderItemIcms;
 interface
 uses System.Classes, System.SysUtils,BaseController,
       tblOrderItemIcms, tblEntity, FireDAC.Comp.Client,
-      FireDAC.Stan.Param, System.Generics.Collections;
+      FireDAC.Stan.Param, System.Generics.Collections,ControllerOrderItemIcmsFcp;
 
 Type
   TListaOrderItemIcms = TObjectList<TOrderItemIcms>;
@@ -15,6 +15,7 @@ Type
   public
     Registro : TOrderItemIcms;
     Lista: TListaOrderItemIcms;
+    FCP : TControllerOrderItemIcmsFcp;
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
     function save:boolean;
@@ -38,6 +39,7 @@ begin
 inherited;
   Registro := TOrderItemIcms.Create;
   Lista := TListaOrderItemIcms.Create;
+  FCP := TControllerOrderItemIcmsFcp.Create(self);
 end;
 
 function TControllerOrderItemIcms.delete: boolean;
@@ -72,6 +74,7 @@ end;
 
 destructor TControllerOrderItemIcms.Destroy;
 begin
+  FCP.DisposeOf;
   Registro.DisposeOf;
   Lista.DisposeOf;
   inherited;
