@@ -75,3 +75,7 @@ bin/Config/db.ini
 bin/Config/driver.ini
 bin/Config/.env
 bin/api_nfe.exe
+#XML da Nfe
+bin/Docs/
+#Certificado
+bin/*.pfx
