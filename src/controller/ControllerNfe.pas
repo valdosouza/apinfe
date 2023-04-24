@@ -79,7 +79,7 @@ type
       constructor Create(AOwner: TComponent); override;
       destructor Destroy; override;
       procedure inicializa;virtual;
-      function getAuthorization:boolean;
+      function getAuthorization:boolean;Virtual;
       function chekAuthorization:boolean;
       property Estabelecimento : Integer write setFEstabelecimento;
       property MostraLote : boolean read FMostraLote write setFMostraLote;
@@ -205,7 +205,7 @@ Begin
       FFileXML := Copy(FNfe.NotasFiscais.Items[0].Nfe.infNFe.ID,(Length(FNfe.NotasFiscais.Items[0].Nfe.infNFe.ID) - 44) + 1, 44) + '-NFe.xml';
       FNfe.NotasFiscais.GerarNFe;
 
-      FNfe.NotasFiscais.GravarXML(concat(FCtrlInstitution.PathPublico + '\xml\nfe',FFileXML) );
+      FNfe.NotasFiscais.GravarXML(concat(FCtrlInstitution.PathPublico + '\xml\nfe\',FFileXML) );
       FNfe.NotasFiscais.Assinar;
       FNfe.NotasFiscais.Validar;
     end;

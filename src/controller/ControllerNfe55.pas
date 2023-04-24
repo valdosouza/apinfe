@@ -27,7 +27,7 @@ type
     destructor Destroy; override;
     procedure inicializa;override;
     function ValidateAuthorization:Boolean;Virtual;
-    procedure getAuthorization;Virtual;
+    function getAuthorization:boolean;Override;
   End;
 implementation
 
@@ -199,9 +199,10 @@ Begin
   }
 end;
 
-procedure TControllerNfe55.getAuthorization;
+function TControllerNfe55.getAuthorization:boolean;
 begin
   GeraDadosDanfe;
+  inherited;
 end;
 
 procedure TControllerNfe55.handlReturn;
